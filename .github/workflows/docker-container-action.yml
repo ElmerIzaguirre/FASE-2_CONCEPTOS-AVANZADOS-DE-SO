@@ -11,39 +11,39 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    #Clonar el repositorio
+    # 1️⃣ Clonar el repositorio
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    #Construir la imagen Docker desde la carpeta correcta
+    # 2️⃣ Construir la imagen Docker desde la carpeta correcta
     - name: Build Docker image
       run: docker build -t my-simple-app ./ejercicio1-docker
 
-    #Ejecutar el contenedor
-    - name: Run Docker container
-      run: |
-        docker run -d --name my-running-app my-simple-app
-        sleep 5
+    # 3️⃣ Ejecutar el contenedor en background para que no se detenga
+    - name: Run Docker container in background
+      run: docker run -d --name my-running-app my-simple-app tail -f /dev/null
 
-    #Mostrar logs del contenedor
+    # 4️⃣ Crear archivo dentro del contenedor
+    - name: Create file inside container
+      run: docker exec my-running-app sh -c "echo 'Hello from container!' > /tmp/hello.txt"
+
+    # 5️⃣ Copiar archivo del contenedor al host
+    - name: Copy file to host
+      run: docker cp my-running-app:/tmp/hello.txt ./ejercicio1-docker/hello-from-container.txt
+
+    # 6️⃣ Mostrar logs del contenedor (opcional)
     - name: Show container logs
       run: docker logs my-running-app
 
-    #Demostrar comunicación con el host (crear un archivo dentro del contenedor y copiarlo)
-    - name: Container to host communication
-      run: |
-        docker exec my-running-app sh -c "echo 'Hello from container!' > /tmp/hello.txt"
-        docker cp my-running-app:/tmp/hello.txt ./ejercicio1-docker/hello-from-container.txt
-
-    #Monitorear recursos del contenedor
+    # 7️⃣ Monitorear recursos del contenedor
     - name: Monitor container resources
       run: docker stats --no-stream my-running-app
 
-    #Limpiar contenedor
+    # 8️⃣ Limpiar contenedor
     - name: Stop and remove container
       run: docker rm -f my-running-app
 
-    #Subir artifact generado
+    # 9️⃣ Subir artifact generado
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
