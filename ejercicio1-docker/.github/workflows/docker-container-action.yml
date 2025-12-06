@@ -1,0 +1,43 @@
+name: Docker Container CI
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Chequear código
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2. Construir la imagen Docker
+      - name: Build Docker image
+        run: |
+          docker build -t my-simple-app .
+
+      # 3. Ejecutar el contenedor
+      - name: Run Docker container
+        run: |
+          docker run --name simple-container -d my-simple-app
+          sleep 3
+
+      # 4. Mostrar logs del contenedor
+      - name: Show container logs
+        run: |
+          docker logs simple-container
+
+      # 5. Monitorear recursos del contenedor
+      - name: Monitor container resources
+        run: |
+          docker stats simple-container --no-stream
+
+      # 6. Detener y eliminar el contenedor
+      - name: Stop and remove container
+        run: |
+          docker stop simple-container
+          docker rm simple-container
