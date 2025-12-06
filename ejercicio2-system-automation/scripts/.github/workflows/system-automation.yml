@@ -1,1 +1,41 @@
-# contenido del workflow system-automation.yml aquí
+name: System Automation
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  system-automation:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    env:
+      TEST_ENV: "MiVariableDePrueba"
+
+    steps:
+      # 1. Checkout del repositorio
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. Ejecutar script según OS
+      - name: Run system script
+        shell: ${{ matrix.os == 'ubuntu-latest' && 'bash' || 'powershell' }}
+        run: |
+          if [[ "${{ matrix.os }}" == "ubuntu-latest" ]]; then
+            chmod +x scripts/linux-script.sh
+            ./scripts/linux-script.sh
+          else
+            ./scripts/windows-script.ps1
+
+      # 3. Guardar artifacts
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: system-artifacts
+          path: |
+            scripts/artifact.txt
+            scripts/testfile.txt
