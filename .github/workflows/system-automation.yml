@@ -1,1 +1,54 @@
-# contenido del workflow system-automation.yml aquí
+name: System Automation CI
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  automation:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+    # 1️⃣ Clonar repositorio
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    # 2️⃣ Configurar variables de entorno
+    - name: Set environment variables
+      run: |
+        echo "MY_VAR=HelloWorld" >> $GITHUB_ENV
+
+    # 3️⃣ Ejecutar script según sistema operativo
+    - name: Run automation script
+      shell: ${{ matrix.os == 'windows-latest' && 'pwsh' || 'bash' }}
+      run: |
+        if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
+          chmod +x ./ejercicio2-system-automation/scripts/linux-script.sh
+          ./ejercicio2-system-automation/scripts/linux-script.sh
+        else
+          ./ejercicio2-system-automation/scripts/windows-script.ps1
+        fi
+
+    # 4️⃣ Manejo de errores (ejemplo)
+    - name: Check last command exit code
+      run: |
+        if [ $? -ne 0 ]; then
+          echo "Script failed"
+          exit 1
+        fi
+
+    # 5️⃣ Crear un archivo de salida como artifact
+    - name: Generate artifact
+      run: echo "Output from ${{ matrix.os }}" > ./ejercicio2-system-automation/output-${{ matrix.os }}.txt
+
+    # 6️⃣ Subir artifact
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: automation-${{ matrix.os }}
+        path: ./ejercicio2-system-automation/output-${{ matrix.os }}.txt
