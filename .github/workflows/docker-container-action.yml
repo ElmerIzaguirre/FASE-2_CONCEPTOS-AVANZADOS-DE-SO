@@ -11,33 +11,41 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Chequear código
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    #Clonar el repositorio
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      # 2. Construir la imagen Docker
-      - name: Build Docker image
-        run: |
-          docker build -t my-simple-app .
+    #Construir la imagen Docker desde la carpeta correcta
+    - name: Build Docker image
+      run: docker build -t my-simple-app ./ejercicio1-docker
 
-      # 3. Ejecutar el contenedor
-      - name: Run Docker container
-        run: |
-          docker run --name simple-container -d my-simple-app
-          sleep 3
+    #Ejecutar el contenedor
+    - name: Run Docker container
+      run: |
+        docker run -d --name my-running-app my-simple-app
+        sleep 5
 
-      # 4. Mostrar logs del contenedor
-      - name: Show container logs
-        run: |
-          docker logs simple-container
+    #Mostrar logs del contenedor
+    - name: Show container logs
+      run: docker logs my-running-app
 
-      # 5. Monitorear recursos del contenedor
-      - name: Monitor container resources
-        run: |
-          docker stats simple-container --no-stream
+    #Demostrar comunicación con el host (crear un archivo dentro del contenedor y copiarlo)
+    - name: Container to host communication
+      run: |
+        docker exec my-running-app sh -c "echo 'Hello from container!' > /tmp/hello.txt"
+        docker cp my-running-app:/tmp/hello.txt ./ejercicio1-docker/hello-from-container.txt
 
-      # 6. Detener y eliminar el contenedor
-      - name: Stop and remove container
-        run: |
-          docker stop simple-container
-          docker rm simple-container
+    #Monitorear recursos del contenedor
+    - name: Monitor container resources
+      run: docker stats --no-stream my-running-app
+
+    #Limpiar contenedor
+    - name: Stop and remove container
+      run: docker rm -f my-running-app
+
+    #Subir artifact generado
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: container-output
+        path: ./ejercicio1-docker/hello-from-container.txt
