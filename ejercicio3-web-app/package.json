@@ -15,11 +15,11 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^5.1.1",
-    "vite": "^7.2.4",
-    "vitest": "^4.7.5",
-    "@testing-library/react": "^14.3.1",
-    "@testing-library/jest-dom": "^6.0.0",
-    "jsdom": "^22.1.0"
-  }
+  "@vitejs/plugin-react": "^5.1.1",
+  "vite": "^7.2.4",
+  "vitest": "^4.0.15",
+  "@testing-library/react": "^14.3.1",
+  "@testing-library/jest-dom": "^6.0.0",
+  "jsdom": "^22.1.0"
+}
 }
