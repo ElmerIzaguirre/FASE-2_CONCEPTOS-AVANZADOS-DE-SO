@@ -27,13 +27,10 @@
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
     "vite": "^7.2.4",
-<<<<<<< HEAD
     "vitest": "^4.7.5",
     "@testing-library/react": "^14.0.0",
     "@testing-library/jest-dom": "^6.0.0"
-=======
     "vitest": "^4.0.15"
->>>>>>> 24d2337 (Configuración de Vitest con React y tests funcionando)
   }
 }
 
