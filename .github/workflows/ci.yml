@@ -15,6 +15,10 @@ jobs:
         node-version: [18.x, 20.x]
     runs-on: ${{ matrix.os }}
 
+    defaults:
+      run:
+        working-directory: ejercicio3-web-app
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -24,6 +28,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
+          cache-dependency-path: ejercicio3-web-app/package-lock.json
 
       - name: Install dependencies
         run: npm ci
@@ -44,12 +49,16 @@ jobs:
         if: matrix.os == 'ubuntu-latest' && matrix.node-version == '20.x'
         with:
           name: coverage-report
-          path: coverage/
+          path: ejercicio3-web-app/coverage/
 
   build:
     name: Build Application
     needs: test
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ejercicio3-web-app
 
     steps:
       - name: Checkout repository
@@ -60,6 +69,7 @@ jobs:
         with:
           node-version: '20.x'
           cache: 'npm'
+          cache-dependency-path: ejercicio3-web-app/package-lock.json
 
       - name: Install dependencies
         run: npm ci
@@ -73,5 +83,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: production-build
-          path: dist/
+          path: ejercicio3-web-app/dist/
           retention-days: 7
